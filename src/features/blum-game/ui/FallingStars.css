@@ -1,0 +1,90 @@
+.falling-stars-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    /*background-color: #000; !* Dark background for contrast *!*/
+    background-image: url(/img/game/bg.jpg);
+}
+
+.score-board {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+
+    .timer {
+        font-size: 24px;
+        font-weight: 500;
+    }
+
+    .score {
+        font-size: 24px;
+        font-weight: 500;
+    }
+}
+
+.star {
+    position: absolute;
+    top: 50px; /* Start above the screen */
+    /*top: -50px; !* Start above the screen *!*/
+    font-size: 24px;
+    transition: transform 0.2s ease-in-out;
+    animation: fall linear;
+}
+
+.bomb.firing {
+    animation: bombFire 1s forwards;
+}
+
+@keyframes bombFire {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-50px) scale(1.1); /* Bomb lifts off */
+    }
+    100% {
+        transform: translateY(500px) scale(0.5); /* Bomb flies downward and shrinks */
+        opacity: 0; /* Bomb fades out */
+    }
+}
+
+.explosion {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, #ffcc00, #ff0000, #800000);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.explosion.active {
+    display: block;
+    opacity: 1;
+    transform: scale(2); /* Explosion effect */
+    animation: explosionFade 1s forwards;
+}
+
+@keyframes explosionFade {
+    0% {
+        opacity: 1;
+        transform: scale(2);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(3); /* Fade out and expand */
+    }
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh); /* Fall to the bottom of the screen */
+    }
+}
