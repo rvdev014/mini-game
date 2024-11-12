@@ -1,129 +1,92 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import './FallingStars.css'; // Your custom CSS for styling and animation
+import {useEffect, useRef} from 'react';
+import './FallingStars.css';
+import {useBlumGameStore} from "../model/store.ts";
+import {secondsToTimer} from "../utils/helper.ts"; // Your custom CSS for styling and animation
+
+function random(from, to) {
+    return Math.floor(Math.random() * (to - from + 1) + from);
+}
 
 export const BlumGame = () => {
-    const containerElem = useRef<HTMLElement>();
+    const containerElem = useRef<HTMLDivElement | null>(null);
 
-    const gameTime = useRef(0);
-    const gameTimer = useRef(0);
-    const interval = useRef(0);
-    const bombInterval = useRef(0);
+    const isStarted = useBlumGameStore(state => state.isStarted);
+    const isGameOver = useBlumGameStore(state => state.isGameOver);
 
-    const [score, setScore] = useState(0)
-    const [running, setRunning] = useState(false)
+    const ices = useBlumGameStore(state => state.ices);
+    const stars = useBlumGameStore(state => state.stars);
+    const bombs = useBlumGameStore(state => state.bombs);
 
-    const [stars, setStars] = useState([]);
-    const [bombs, setBombs] = useState([]);
+    const gameTime = useBlumGameStore(state => state.gameTime);
+    const gameScore = useBlumGameStore(state => state.gameScore);
+    const onStartGame = useBlumGameStore(state => state.onStartGame);
 
-    const starData = () =>  {
-        return {
-            id: Math.random().toString(36).substring(7),
-            position: Math.random() * (85 - 10) + 10,
-            duration: 6,
-            width: Math.floor(Math.random() * (30 - 20 + 1)) + 20,
-        }
-    }
+    const onIceClick = useBlumGameStore(state => state.onIceClick);
+    const onStarClick = useBlumGameStore(state => state.onStarClick);
+    const onBombClick = useBlumGameStore(state => state.onBombClick);
 
-    const bombData = () => {
-        return {
-            id: Math.random().toString(36).substring(7),
-            position: Math.random() * (85 - 10) + 10,
-            duration: 6,
-            width: 40,
-        }
-    }
-
-    const onBomb = (id, e) => {
-        setScore(0);
-
-        const bomb = e.currentTarget;
-        const bombImg = bomb.querySelector('.bomb');
-        const explosion = bomb.querySelector('.explosion');
-
-        // Start the bomb firing animation
-        bombImg.classList.add('firing');
-
-        bombImg.style.display = 'none'; // Hide the bomb
-        explosion.classList.add('active'); // Show and animate the explosion
-
-        // Remove the explosion effect after it completes
-        setTimeout(() => {
-            explosion.classList.remove('active');
-        }, 1000);
-    };
-
-    const claimStar = (id) => {
-        console.log('Claiming star', id);
-        setStars(prevStars => prevStars.filter(star => star.id !== id));
-        setScore(prev => prev + 1);
-    };
+    const resetGame = useBlumGameStore(state => state.reset);
 
     useEffect(() => {
-        setBombs(prev => [...prev, bombData()]);
-        setBombs(prev => [...prev, bombData()]);
-        setBombs(prev => [...prev, bombData()]);
-        setBombs(prev => [...prev, bombData()]);
+        return () => {
+            resetGame()
+        }
     }, []);
-
-    console.log('Bombs', bombs);
-
-    useEffect(() => {
-        if (!containerElem.current) return;
-
-        if (!running) {
-            setStars([]);
-            setBombs([]);
-            clearInterval(interval.current);
-            clearInterval(gameTimer.current);
-
-            containerElem.current?.addEventListener('click', () => setRunning(true), {once: true});
-        } else {
-            setScore(0);
-
-            /*gameTimer.current = setInterval(() => {
-                gameTime.current += 1;
-                if (gameTime.current === 60) {
-                    setRunning(false)
-                    gameTime.current = 0;
-                }
-            }, 1000);
-
-            interval.current = setInterval(() => {
-                setStars(prev => [...prev, starData()]);
-                if (bombInterval.current === 7) {
-                    setBombs(prev => [...prev, bombData()]);
-                    bombInterval.current = 0;
-                } else {
-                    bombInterval.current += 1;
-                }
-            }, Math.random() + (500 - 100) + 100);*/
-        }
-    }, [containerElem.current, running]);
-
-    const getTime = (time) => {
-        return time < 10 ? '0' + time : time;
-    }
 
     return (
         <div className="falling-stars-container" ref={containerElem}>
+            <div className="iced-overlay"/>
+
             <div className="score-board">
-                <span className="timer">{'00:' + (getTime(60 - gameTime.current))}</span>
-                <div className="score"><span>{score}</span></div>
+                <span className="timer">{secondsToTimer(gameTime)}</span>
+                <div className="score"><span>{gameScore}</span></div>
             </div>
 
+            {!isStarted && (
+                <>
+                    {isGameOver ? (
+                        <div className="start-game">
+                            <h1>Game over</h1>
+                            <h2>Your score: {gameScore}</h2>
+                            <button className="startBtn" onClick={onStartGame}>Restart game</button>
+                        </div>
+                    ) : (
+                        <div className="start-game">
+                            <h1>Blum Game</h1>
+                            <button className="startBtn" onClick={onStartGame}>Start game</button>
+                        </div>
+                    )}
+                </>
+            )}
+
             {stars.map(star => (
-                <img
-                    src="/img/game/star.png"
-                    alt="Star"
+                <div
                     key={star.id}
                     className="star"
                     style={{
                         left: `${star.position}%`,
-                        animationDuration: `${star.duration}s`
+                        animationDuration: `${star.duration}s`,
+                        width: star.width
                     }}
-                    onTouchStart={() => claimStar(star.id)}
-                    width={star.width}
-                />
+                    onTouchStart={e => onStarClick(star.id, e)}
+                >
+                    <img src="/img/game/star.png" alt="Star"/>
+                </div>
+            ))}
+
+            {ices.map(ice => (
+                <div
+                    key={ice.id}
+                    className="star"
+                    style={{
+                        left: `${ice.position}%`,
+                        animationDuration: `${ice.duration}s`,
+                        width: ice.width
+                    }}
+                    onTouchStart={e => onIceClick(ice.id, e)}
+                >
+                    <img src="/img/game/ice.png" alt="Ice"/>
+                </div>
             ))}
 
             {bombs.map(bomb => (
@@ -135,13 +98,9 @@ export const BlumGame = () => {
                         animationDuration: `${bomb.duration}s`,
                         width: bomb.width
                     }}
-                    onTouchStart={(e) => onBomb(bomb.id, e)}
+                    onTouchStart={e => onBombClick(bomb.id, e)}
                 >
-                    <img
-                        className="bomb"
-                        src="/img/game/bomb.png"
-                        alt="Star"
-                    />
+                    <img className="bomb" src="/img/game/bomb.png" alt="Star"/>
                     <div className="explosion"></div>
                 </div>
             ))}

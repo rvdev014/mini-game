@@ -5,6 +5,36 @@
     overflow: hidden;
     /*background-color: #000; !* Dark background for contrast *!*/
     background-image: url(/img/game/bg.jpg);
+    background-repeat: repeat;
+}
+
+.start-game {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .startBtn {
+        margin-top: 10px;
+        padding: 10px;
+        font-size: 16px;
+        text-transform: uppercase;
+        font-weight: bold;
+        background-color: #fcce00;
+        color: #000;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: #ffcc00;
+        }
+    }
 }
 
 .score-board {
@@ -27,11 +57,62 @@
 
 .star {
     position: absolute;
-    top: 50px; /* Start above the screen */
-    /*top: -50px; !* Start above the screen *!*/
+    /*top: 50px; !* Start above the screen *!*/
+    top: -50px; /* Start above the screen */
     font-size: 24px;
     transition: transform 0.2s ease-in-out;
     animation: fall linear;
+    animation-play-state: running;
+}
+
+.star.paused {
+    animation-play-state: paused;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh); /* Fall to the bottom of the screen */
+    }
+}
+
+.claimed {
+    animation: claimStar 0.5s forwards;
+}
+
+@keyframes claimStar {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+}
+
+/* Styles for the +1 element */
+.plus-one {
+    position: absolute;
+    top: -17px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-weight: bold;
+    color: #fcce00; /* Customize the color as desired */
+    opacity: 0;
+    animation: riseAndFade 0.5s forwards;
+}
+
+/* Keyframes for the +1 animation */
+@keyframes riseAndFade {
+    0% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -40px);
+        opacity: 0;
+    }
 }
 
 .bomb.firing {
@@ -68,23 +149,36 @@
 .explosion.active {
     display: block;
     opacity: 1;
-    transform: scale(2); /* Explosion effect */
     animation: explosionFade 1s forwards;
 }
 
 @keyframes explosionFade {
     0% {
         opacity: 1;
-        transform: scale(2);
+        width: 100px;
+        height: 100px;
     }
     100% {
         opacity: 0;
-        transform: scale(3); /* Fade out and expand */
+        width: 500px;
+        height: 500px;
     }
 }
 
-@keyframes fall {
-    to {
-        transform: translateY(110vh); /* Fall to the bottom of the screen */
-    }
+.shake {
+    animation: screenShake 0.5s ease;
+}
+
+@keyframes screenShake {
+    0%, 100% { transform: translate(0, 0); }
+    10%, 30%, 50%, 70%, 90% { transform: translate(-10px, 0); }
+    20%, 40%, 60%, 80% { transform: translate(10px, 0); }
+}
+
+
+/* Overlay that covers the entire screen */
+.iced-overlay {
+    backdrop-filter: blur(10px); /* Blur effect for a frosted look */
+    box-shadow: inset 0 0 30px 15px rgba(173, 216, 230, 0.8); /* Ice-like border shadow */
+    transition: opacity 0.5s ease-in-out;
 }
