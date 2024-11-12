@@ -1,0 +1,1 @@
+export {DinoGame} from './ui/index.tsx';

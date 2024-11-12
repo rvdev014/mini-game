@@ -1,11 +1,7 @@
 import {useEffect, useRef} from 'react';
-import './FallingStars.css';
+import './blum.css';
 import {useBlumGameStore} from "../model/store.ts";
 import {secondsToTimer} from "../utils/helper.ts"; // Your custom CSS for styling and animation
-
-function random(from, to) {
-    return Math.floor(Math.random() * (to - from + 1) + from);
-}
 
 export const BlumGame = () => {
     const containerElem = useRef<HTMLDivElement | null>(null);
@@ -70,7 +66,7 @@ export const BlumGame = () => {
                     }}
                     onTouchStart={e => onStarClick(star.id, e)}
                 >
-                    <img src="/img/game/star.png" alt="Star"/>
+                    <img src="/img/game/star.png" alt="Star" draggable="false"/>
                 </div>
             ))}
 
@@ -85,7 +81,7 @@ export const BlumGame = () => {
                     }}
                     onTouchStart={e => onIceClick(ice.id, e)}
                 >
-                    <img src="/img/game/ice.png" alt="Ice"/>
+                    <img src="/img/game/ice.png" alt="Ice" draggable="false"/>
                 </div>
             ))}
 
@@ -100,7 +96,7 @@ export const BlumGame = () => {
                     }}
                     onTouchStart={e => onBombClick(bomb.id, e)}
                 >
-                    <img className="bomb" src="/img/game/bomb.png" alt="Star"/>
+                    <img className="bomb" src="/img/game/bomb.png" alt="Star" draggable="false"/>
                     <div className="explosion"></div>
                 </div>
             ))}

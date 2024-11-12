@@ -1,0 +1,138 @@
+.night {
+    --sky: #1b4f72;
+    --bg-color: #1b2631;
+    --color: snow;
+    --brightness: 80%;
+}
+
+.bw {
+    --bg-color: black;
+    --sky: #1b4f72;
+    --grayscale: 1;
+    --brightness: 120%;
+    --contrast: 200%;
+    --color: snow;
+}
+
+.dino-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dino-container {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    background: #1b4f72;
+}
+
+.ground {
+    height: 30px;
+    --left: 0;
+    position: absolute;
+    width: 300%;
+    bottom: 0;
+    left: calc(var(--left) * 1%);
+    background: url(/img/game/ground_grass.png) repeat-x;
+    filter: brightness(var(--brightness)) grayscale(var(--grayscale));
+    animation: moveGround 5s linear infinite; /* Adjust the duration to control speed */
+}
+
+@keyframes moveGround {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%); /* Move the ground left by 50% */
+    }
+}
+
+.dino {
+    position: absolute;
+    bottom: 5px;
+    width: 80px;
+    height: 80px;
+    background-image: url(/img/game/gw_1.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    animation: run 0.4s infinite;
+    z-index: 9;
+}
+
+.jumping {
+    animation: realisticJump 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; /* Adjust duration and easing */
+}
+
+@keyframes realisticJump {
+    0% {
+        transform: translateY(0); /* Start on the ground */
+    }
+    50% {
+        transform: translateY(-150px); /* Peak of the jump */
+    }
+    100% {
+        transform: translateY(0); /* Land back on the ground */
+    }
+}
+
+@keyframes run {
+    0% {
+        background-image: url(/img/game/gw_1.png);
+    }
+    50% {
+        background-image: url(/img/game/gw_2.png);
+    }
+    100% {
+        background-image: url(/img/game/gw_1.png);
+    }
+}
+
+.start-game {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .startBtn {
+        margin-top: 10px;
+        padding: 10px;
+        font-size: 16px;
+        text-transform: uppercase;
+        font-weight: bold;
+        background-color: #fcce00;
+        color: #000;
+        border: none;
+        border-radius: 5px;
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: #ffcc00;
+        }
+    }
+}
+
+.score-board {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+
+    .timer {
+        font-size: 30px;
+        font-weight: bold;
+    }
+
+    .score {
+        font-size: 30px;
+        font-weight: bold;
+    }
+}

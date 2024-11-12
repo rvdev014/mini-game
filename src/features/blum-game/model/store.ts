@@ -5,26 +5,23 @@ import {newBomb, newIce, newStar} from "../utils/helper.ts";
 export const GAME_TIME = 60;
 export const BOMBS_INTERVAL = 7;
 export const ICES_INTERVAL = 12;
+export const ICED_TIME = 4000;
 export const STARS_INTERVAL = 300;
 
 const initialStore = {
-    intervalsAndTimeouts: [],
+    intervalsAndTimeouts: [] as number[],
 
-    stars: [],
-    bombs: [],
-    ices: [],
+    stars: [] as IFallingItem[],
+    bombs: [] as IFallingItem[],
+    ices: [] as IFallingItem[],
     gameTime: GAME_TIME,
     gameScore: 0,
-    bombSeconds: 0,
     isStarted: false,
     isGameOver: false,
 } as IBlumGameStore;
 
 export const useBlumGameStore = create<IBlumGameStore>((set, get) => ({
     ...initialStore,
-
-    init: async () => {
-    },
 
     onStarClick: async (id: string, event) => {
         const starParent = event.currentTarget;
@@ -47,24 +44,6 @@ export const useBlumGameStore = create<IBlumGameStore>((set, get) => ({
         }, 300);
     },
 
-    onIceClick: async (id: string, event) => {
-        const iceParent = event.currentTarget;
-        const iceImg = iceParent.querySelector('img');
-
-        if (iceImg.classList.contains('claimed')) return;
-
-        const containerElem = document.querySelector('.falling-stars-container');
-        containerElem.classList.add('iced-overlay');
-        iceImg.classList.add('claimed');
-
-        get().pauseGame();
-        get().addTimeout(() => {
-            get().resumeGame();
-            containerElem.classList.remove('iced-overlay');
-            set(state => ({ices: state.ices.filter(ice => ice.id !== id)}));
-        }, 3000);
-    },
-
     onBombClick: async (id: string, event) => {
         set({gameScore: 0});
 
@@ -74,13 +53,14 @@ export const useBlumGameStore = create<IBlumGameStore>((set, get) => ({
         if (bombImg.classList.contains('firing')) return;
 
         const explosion = bombParent.querySelector('.explosion');
+        const containerElem = document.querySelector('.falling-stars-container');
 
         // Start the bomb firing animation
         bombImg.classList.add('firing');
         bombImg.style.display = 'none';
 
         explosion.classList.add('active');
-        document.body.classList.add('shake');
+        containerElem?.classList.add('shake');
         if (navigator.vibrate) {
             navigator.vibrate([200]);
         }
@@ -88,9 +68,27 @@ export const useBlumGameStore = create<IBlumGameStore>((set, get) => ({
         // Remove the explosion effect after it completes
         get().addTimeout(() => {
             explosion.classList.remove('active');
-            document.body.classList.remove('shake');
+            containerElem?.classList.remove('shake');
             set(state => ({bombs: state.bombs.filter(bomb => bomb.id !== id)}));
         }, 1000);
+    },
+
+    onIceClick: async (id: string, event) => {
+        const iceParent = event.currentTarget;
+        const iceImg = iceParent.querySelector('img');
+
+        if (iceImg.classList.contains('claimed')) return;
+
+        const containerElem = document.querySelector('.falling-stars-container');
+        containerElem?.classList.add('iced-overlay');
+        iceImg.classList.add('claimed');
+        set(state => ({ices: state.ices.filter(ice => ice.id !== id)}));
+
+        get().pauseGame();
+        get().addTimeout(() => {
+            get().resumeGame();
+            containerElem?.classList.remove('iced-overlay');
+        }, ICED_TIME);
     },
 
     prepareIntervals: async () => {
@@ -110,7 +108,6 @@ export const useBlumGameStore = create<IBlumGameStore>((set, get) => ({
             if (get().gameTime % ICES_INTERVAL === 0) {
                 get().appendIce(newIce());
             }
-
         }, 1000);
 
         get().addInterval(() => {
@@ -172,13 +169,15 @@ export const useBlumGameStore = create<IBlumGameStore>((set, get) => ({
     },
 
     addTimeout: (callback, delay) => {
-        const id = setTimeout(callback, delay);
-        set(state => ({intervalsAndTimeouts: [...state.intervalsAndTimeouts, id]}));
+        set(state => ({
+            intervalsAndTimeouts: [...state.intervalsAndTimeouts, setTimeout(callback, delay)]
+        }));
     },
 
     addInterval: (callback, delay) => {
-        const id = setInterval(callback, delay);
-        set(state => ({intervalsAndTimeouts: [...state.intervalsAndTimeouts, id]}));
+        set(state => ({
+            intervalsAndTimeouts: [...state.intervalsAndTimeouts, setInterval(callback, delay)]
+        }));
     },
 
     clearIntervalsAndTimeouts: () => {

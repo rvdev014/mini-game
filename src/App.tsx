@@ -1,11 +1,12 @@
 import './App.css'
-import {Game} from "./features/game";
-import {BlumGame} from "./features/blum-game";
+// import {BlumGame} from "./features/blum-game";
+import {DinoGame} from "./features/dino-game";
 
 function App() {
     return (
         <>
-          <BlumGame/>
+            {/*<BlumGame/>*/}
+            <DinoGame/>
         </>
     )
 }
