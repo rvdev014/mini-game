@@ -4,8 +4,8 @@ export function newStar(): IFallingItem {
     return {
         id: Math.random().toString(36).substring(7),
         position: Math.random() * (85 - 10) + 10,
-        duration: random(2, 3),
-        width: random(30, 40),
+        duration: random(5, 6),
+        width: random(40, 50),
     };
 }
 

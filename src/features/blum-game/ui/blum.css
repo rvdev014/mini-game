@@ -55,14 +55,22 @@
 }
 
 .star {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
     position: absolute;
-    /*top: 50px; !* Start above the screen *!*/
-    top: -50px; /* Start above the screen */
+    top: -50px;
     font-size: 24px;
     transition: transform 0.2s ease-in-out;
     animation: fall linear;
     animation-play-state: running;
     animation-fill-mode: forwards;
+
+    .starImg {
+        max-width: 80%;
+        height: auto;
+    }
 }
 
 .star.paused {
@@ -76,7 +84,7 @@
 }
 
 .claimed {
-    animation: claimStar 0.5s forwards;
+    animation: claimStar 0.5s;
 }
 
 @keyframes claimStar {

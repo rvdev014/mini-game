@@ -29,6 +29,14 @@ export const BlumGame = () => {
         }
     }, []);
 
+    /*const pauseGame = async () => {
+        if (useBlumGameStore.getState().isRunning) {
+            await useBlumGameStore.getState().pauseGame();
+        } else {
+            await useBlumGameStore.getState().resumeGame();
+        }
+    }*/
+
     return (
         <div className="falling-stars-container" ref={containerElem}>
             <div className="iced-overlay"/>
@@ -36,6 +44,7 @@ export const BlumGame = () => {
             <div className="score-board">
                 <span className="timer">{secondsToTimer(gameTime)}</span>
                 <div className="score"><span>{gameScore}</span></div>
+                {/*<button onClick={pauseGame}>Pause</button>*/}
             </div>
 
             {!isStarted && (
@@ -62,11 +71,12 @@ export const BlumGame = () => {
                     style={{
                         left: `${star.position}%`,
                         animationDuration: `${star.duration}s`,
-                        width: star.width
+                        width: star.width,
+                        height: star.width,
                     }}
                     onTouchStart={e => onStarClick(star.id, e)}
                 >
-                    <img src="/img/game/star.png" alt="Star" draggable="false"/>
+                    <img className="starImg" src="/img/game/star.png" alt="Star" draggable="false"/>
                 </div>
             ))}
 
@@ -77,7 +87,8 @@ export const BlumGame = () => {
                     style={{
                         left: `${ice.position}%`,
                         animationDuration: `${ice.duration}s`,
-                        width: ice.width
+                        width: ice.width,
+                        height: ice.width,
                     }}
                     onTouchStart={e => onIceClick(ice.id, e)}
                 >
@@ -92,7 +103,8 @@ export const BlumGame = () => {
                     style={{
                         left: `${bomb.position}%`,
                         animationDuration: `${bomb.duration}s`,
-                        width: bomb.width
+                        width: bomb.width,
+                        height: bomb.width,
                     }}
                     onTouchStart={e => onBombClick(bomb.id, e)}
                 >

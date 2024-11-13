@@ -29,29 +29,44 @@
     background: #1b4f72;
 }
 
-.ground {
-    height: 30px;
-    --left: 0;
+.ground-container {
     position: absolute;
-    width: 300%;
+    width: 100%;
+    overflow: hidden;
+    height: 30px;
     bottom: 0;
-    left: calc(var(--left) * 1%);
+}
+
+.ground {
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    bottom: 0;
     background: url(/img/game/ground_grass.png) repeat-x;
-    filter: brightness(var(--brightness)) grayscale(var(--grayscale));
-    animation: moveGround 5s linear infinite; /* Adjust the duration to control speed */
+    animation: moveGround 2s linear infinite;
+    animation-play-state: paused;
+}
+
+.ground.running {
+    animation-play-state: running;
+}
+
+.ground:nth-child(2) {
+    left: 100%;
 }
 
 @keyframes moveGround {
-    0% {
+    from {
         transform: translateX(0);
     }
-    100% {
-        transform: translateX(-50%); /* Move the ground left by 50% */
+    to {
+        transform: translateX(-100%);
     }
 }
 
 .dino {
     position: absolute;
+    left: 10px;
     bottom: 5px;
     width: 80px;
     height: 80px;
@@ -59,12 +74,22 @@
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    animation: run 0.4s infinite;
     z-index: 9;
+    animation: run 0.4s infinite;
+    animation-play-state: paused;
 }
 
-.jumping {
-    animation: realisticJump 1s cubic-bezier(0.25, 1, 0.5, 1) forwards; /* Adjust duration and easing */
+.dino.running {
+    animation-play-state: running;
+}
+
+.dino.jumping {
+    animation: realisticJump 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+    animation-play-state: paused;
+
+    &.running {
+        animation-play-state: running;
+    }
 }
 
 @keyframes realisticJump {
@@ -134,5 +159,25 @@
     .score {
         font-size: 30px;
         font-weight: bold;
+    }
+}
+
+
+
+.rock {
+    position: absolute;
+    bottom: 10px;
+    left: 100%;  /* Start from the right edge */
+    width: 70px;  /* Width of the rock */
+    background-size: contain;
+    animation: moveRock 2.15s linear;
+}
+
+@keyframes moveRock {
+    0% {
+        left: 100%;  /* Start at the right edge */
+    }
+    100% {
+        left: -50px;  /* Move to the left off the screen */
     }
 }

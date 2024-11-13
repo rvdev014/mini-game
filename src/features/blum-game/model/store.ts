@@ -119,7 +119,9 @@ export const useBlumGameStore = create<IBlumGameStore>((set, get) => ({
         set({
             gameTime: GAME_TIME,
             gameScore: 0,
-            isStarted: true
+            isStarted: true,
+            isGameOver: false,
+            isRunning: true,
         });
         get().prepareIntervals();
     },
@@ -145,11 +147,13 @@ export const useBlumGameStore = create<IBlumGameStore>((set, get) => ({
     pauseGame: async () => {
         document.querySelectorAll('.star').forEach(star => star.classList.add('paused'));
         get().clearIntervalsAndTimeouts();
+        set({isRunning: false});
     },
 
     resumeGame: async () => {
         document.querySelectorAll('.star').forEach(star => star.classList.remove('paused'));
         get().prepareIntervals();
+        set({isRunning: true});
     },
 
     finishGame: async () => {

@@ -16,8 +16,10 @@ export interface IBlumGameStore {
 
     isStarted: boolean;
     isGameOver: boolean;
+    isRunning: boolean;
 
     onStartGame: () => void;
+    prepareIntervals: () => Promise<void>;
     finishGame: () => Promise<void>;
     pauseGame: () => Promise<void>;
     resumeGame: () => Promise<void>;

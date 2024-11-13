@@ -24,6 +24,7 @@ export interface IBlumGameStore {
     appendIce: (item: IFallingItem) => void;
 
     isStarted: boolean;
+    isRunning: boolean;
     isGameOver: boolean;
 
     onIceClick: (id: string, event: any) => void;

@@ -16,16 +16,31 @@ export const useDinoGameStore = create<IBlumGameStore>((set, get) => ({
     ...initialStore,
 
     onStartGame: async () => {
+        set({
+            isStarted: true,
+            isGameOver: false,
+            isRunning: true,
+            gameTime: 0,
+            gameScore: 0,
+        });
+        get().prepareIntervals();
+
+        document.querySelectorAll('[data-type="animation"]')?.forEach(elem => elem.classList.add('running'));
+    },
+
+    prepareIntervals: async () => {
 
     },
 
     pauseGame: async () => {
-        document.querySelectorAll('.star').forEach(star => star.classList.add('paused'));
+        document.querySelectorAll('[data-type="animation"]').forEach(star => star.classList.remove('running'));
         get().clearIntervalsAndTimeouts();
+        set({isRunning: false});
     },
 
     resumeGame: async () => {
-        document.querySelectorAll('.star').forEach(star => star.classList.remove('paused'));
+        document.querySelectorAll('[data-type="animation"]').forEach(star => star.classList.add('running'));
+        set({isRunning: true});
     },
 
     finishGame: async () => {
